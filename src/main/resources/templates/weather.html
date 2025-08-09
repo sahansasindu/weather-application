@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather App</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('/image/bgimage.png') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+
+        }
+
+        .weather-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .weather-card {
+            width: 350px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .weather-card:hover {
+            transform: scale(1.05);
+        }
+
+        .weather-header {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .weather-header h2 {
+            font-size: 1.2em;
+            margin: 0;
+        }
+
+        .temp {
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .weather-body {
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .detail {
+            font-size: 0.9em;
+            margin: 5px 0;
+        }
+
+        .icon-img {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+    </style>
+</head>
+<body>
+
+<header style="padding: 20px; position: relative; text-align: center;">
+
+    <form th:action="@{/logout}" method="post"
+          style="position: absolute; top: 20px; right: 20px; margin: 0;">
+        <button type="submit"
+                style="background-color: #e74c3c;
+               color: white;
+               border: none;
+               padding: 10px 20px;
+               border-radius: 5px;
+               cursor: pointer;
+               font-size: 1em;">
+            Logout
+        </button>
+    </form>
+
+
+    <div style="display: flex; justify-content: center; align-items: center; margin-top: 40px;">
+        <img src="/image/cloudy.png" alt="Cloud Icon" style="width: 50px; height: 50px; margin-right: 10px;">
+        <h1 style="margin: 0;">Weather App</h1>
+    </div>
+</header>
+
+
+
+<div class="weather-container">
+    <div th:each="weather : ${weatherList}" class="weather-card" onclick="showOnlyThis(this)">
+        <div class="weather-header">
+            <h2 th:text="${weather.cityName}">City Name</h2>
+            <div class="temp" th:text="${weather.temperature} + '°C'">27°C</div>
+        </div>
+        <div class="weather-body">
+            <div class="detail">
+                <img src="/image/cloud.png" alt="Cloud" class="icon-img">
+                <span th:text="${weather.description}">Few Clouds</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="detailed-view" style="display:none;">
+    <div style="
+        padding: 15px;
+        background: #3498db;
+        border-radius: 10px;
+        max-width: 500px;
+        margin: 40px auto;
+        color: white;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    ">
+
+        <img src="/image/back.png" alt="Back" onclick="goBack()"
+             style="cursor: pointer; width: 24px; height: 24px; vertical-align: middle; margin-bottom: 10px;">
+
+
+        <h2 id="detail-city" style="text-align: center; margin-top: 5px;"></h2>
+
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+            <div id="detail-desc" style="font-size: 1.1em;"></div>
+            <div id="detail-info" style="margin-top: 15px;"></div>
+            <div id="detail-temp" style="font-size: 2em; font-weight: bold;"></div>
+        </div>
+
+
+    </div>
+</div>
+
+
+
+<script>
+    function showOnlyThis(card) {
+
+        document.querySelector('.weather-container').style.display = 'none';
+        document.getElementById('detailed-view').style.display = 'block';
+
+
+        const city = card.querySelector('h2').innerText;
+        const temp = card.querySelector('.temp').innerText;
+        const desc = card.querySelector('.detail span:nth-child(2)').innerText;
+
+        let detailsHTML = '';
+        card.querySelectorAll('.weather-body .detail').forEach((detail, index) => {
+            if (index !== 0) {
+                detailsHTML += `<div>${detail.innerHTML}</div>`;
+            }
+        });
+
+
+        document.getElementById('detail-city').innerText = city;
+        document.getElementById('detail-temp').innerText = temp;
+        document.getElementById('detail-desc').innerText = desc;
+        document.getElementById('detail-info').innerHTML = detailsHTML;
+    }
+
+    function goBack() {
+
+        document.querySelector('.weather-container').style.display = 'flex';
+        document.getElementById('detailed-view').style.display = 'none';
+    }
+</script>
+
+
+</body>
+</html>
+
+
+
